@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>✨ Ultra Premium Gallery</title>
+  <link rel="stylesheet" href="style.css">
+  <!-- Google Font: Inter for clean, modern typography like Unsplash & Pinterest -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+</head>
+<body>
+
+  <!-- ========================================================================
+       SECTION 1: STICKY HEADER (TITLE, SUBTITLE, UPLOAD, COLOUR STYLE, THEME)
+       ======================================================================== -->
+  <header class="header">
+    <div class="header-inner">
+      <div class="brand">
+        <h1>✨ Ultra Premium Gallery</h1>
+        <p>Curated visual inspiration — discover, upload, organize &amp; share</p>
+      </div>
+
+      <div class="header-actions">
+        <!-- Upload + Caption Modal Trigger -->
+        <button id="openUploadBtn" class="btn-upload" type="button">
+          📤 Upload + Caption
+        </button>
+
+        <!-- Colour Style Filter Selector -->
+        <div class="style-select-wrap">
+          <label for="colourStyleSelect">🎨 Style:</label>
+          <select id="colourStyleSelect" class="style-select">
+            <option value="original">Original</option>
+            <option value="bw">Black &amp; White</option>
+            <option value="sepia">Sepia</option>
+            <option value="vintage">Vintage</option>
+          </select>
+        </div>
+
+        <!-- Dark / Light Mode Toggle -->
+        <button id="themeToggleBtn" class="btn-theme" type="button" title="Toggle Dark/Light Mode">
+          🌙
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ========================================================================
+       SECTION 2: FILTERS + INSTANT SEARCH + SORT CONTROLS
+       ======================================================================== -->
+  <section class="controls-section">
+    <div class="controls-top">
+      <!-- Dynamic Category Filter Buttons -->
+      <div id="filterBar" class="filter-bar"></div>
+
+      <!-- Instant Search Bar & Sort Dropdown -->
+      <div class="search-sort-group">
+        <div class="search-box">
+          <span>🔍</span>
+          <input
+            id="searchInput"
+            class="search-input"
+            type="text"
+            placeholder="Search title, category, or caption..."
+          />
+        </div>
+
+        <select id="sortSelect" class="sort-select" aria-label="Sort Gallery">
+          <option value="newest">Sort: Newest</option>
+          <option value="oldest">Sort: Oldest</option>
+          <option value="az">Sort: A–Z</option>
+          <option value="liked">Sort: Most Liked</option>
+        </select>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================================================================
+       SECTION 3: PINTEREST-STYLE MASONRY GALLERY CONTAINER
+       ======================================================================== -->
+  <main class="gallery-wrapper">
+    <div id="masonryGrid" class="masonry-grid"></div>
+
+    <div id="emptyState" class="empty-state">
+      <h3>No matching images found</h3>
+      <p>Try clearing your search query or switching back to the "All" category.</p>
+    </div>
+  </main>
+
+  <!-- ========================================================================
+       SECTION 4: FULL-SCREEN LIGHTBOX WITH ZOOM, SLIDESHOW & COMMENTS
+       ======================================================================== -->
+  <div id="lightbox" class="lightbox" role="dialog" aria-modal="true">
+    <!-- Top Controls Bar -->
+    <div class="lightbox-topbar">
+      <div id="lbCounter" class="lightbox-counter">1 / 9</div>
+
+      <div class="lightbox-tools">
+        <button id="lbZoomInBtn" class="lb-tool-btn" type="button" title="Zoom In">➕ Zoom In</button>
+        <button id="lbZoomOutBtn" class="lb-tool-btn" type="button" title="Zoom Out">➖ Zoom Out</button>
+        <button id="lbResetZoomBtn" class="lb-tool-btn" type="button" title="Reset Zoom">🔄 Reset</button>
+        <button id="lbSlideshowBtn" class="lb-tool-btn" type="button" title="Auto Slideshow">▶️ Slideshow</button>
+        <button id="lbDownloadBtn" class="lb-tool-btn" type="button" title="Download Image">⬇️ Download</button>
+        <button id="lbShareBtn" class="lb-tool-btn" type="button" title="Copy Image Link">🔗 Share</button>
+        <button id="lbFullscreenBtn" class="lb-tool-btn" type="button" title="Toggle Fullscreen">⛶ Fullscreen</button>
+        <button id="lbCloseBtn" class="lb-tool-btn lb-close-btn" type="button" title="Close (ESC)">✕ Close</button>
+      </div>
+    </div>
+
+    <!-- Main Content: Image Stage + Sidebar Info & Comments -->
+    <div class="lightbox-body">
+      <div id="lbStage" class="lightbox-stage">
+        <button id="lbPrevBtn" class="lb-nav-btn lb-prev" type="button" title="Previous (Left Arrow)">&#10094;</button>
+        <img id="lbImage" class="lightbox-img" src="" alt="Full view" />
+        <button id="lbNextBtn" class="lb-nav-btn lb-next" type="button" title="Next (Right Arrow)">&#10095;</button>
+      </div>
+
+      <aside class="lightbox-sidebar">
+        <div>
+          <h2 id="lbTitle" class="lb-title">Image Title</h2>
+          <p id="lbDescription" class="lb-description">Image description goes here.</p>
+        </div>
+
+        <!-- Image Info Panel -->
+        <div class="lb-info-panel">
+          <div class="info-item">
+            <span>Category</span>
+            <strong id="lbCategory">Nature</strong>
+          </div>
+          <div class="info-item">
+            <span>Date Added</span>
+            <strong id="lbDate">Nov 21, 2026</strong>
+          </div>
+          <div class="info-item">
+            <span>Photographer</span>
+            <strong id="lbPhotographer">Elena Vance</strong>
+          </div>
+          <div class="info-item">
+            <span>Likes</span>
+            <strong id="lbLikes">❤️ 128</strong>
+          </div>
+        </div>
+
+        <!-- Comments Section -->
+        <div class="comments-section">
+          <h4>💬 Comments</h4>
+          <form id="commentForm" class="comment-form">
+            <input
+              id="commentInput"
+              class="comment-input"
+              type="text"
+              placeholder="Write a comment..."
+              required
+            />
+            <button class="comment-submit" type="submit">Post</button>
+          </form>
+          <div id="commentsList" class="comments-list"></div>
+        </div>
+      </aside>
+    </div>
+  </div>
+
+  <!-- ========================================================================
+       SECTION 5: UPLOAD & EDIT POST MODAL POPUP
+       ======================================================================== -->
+  <div id="postModal" class="modal-backdrop" role="dialog" aria-modal="true">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h2 id="modalTitle">📤 Upload Photo + Caption</h2>
+        <button id="closeModalBtn" class="modal-close" type="button">✕</button>
+      </div>
+
+      <form id="postForm">
+        <!-- File Upload Input + Live Image Preview -->
+        <div class="form-group">
+          <label for="postImageInput" id="imageInputLabel">Select Image *</label>
+          <input
+            id="postImageInput"
+            class="form-control"
+            type="file"
+            accept="image/*"
+          />
+          <div id="imagePreviewBox" class="preview-box">
+            <img id="imagePreview" src="" alt="Preview" />
+          </div>
+        </div>
+
+        <!-- Title Input -->
+        <div class="form-group">
+          <label for="postTitleInput">Title *</label>
+          <input
+            id="postTitleInput"
+            class="form-control"
+            type="text"
+            placeholder="e.g. My Trip to Murree"
+            required
+          />
+        </div>
+
+        <!-- Caption Textarea -->
+        <div class="form-group">
+          <label for="postCaptionInput">Caption / Description *</label>
+          <textarea
+            id="postCaptionInput"
+            class="form-control"
+            placeholder="e.g. Best day ever! ❤️"
+            required
+          ></textarea>
+        </div>
+
+        <!-- Editable Category Select + "+ Add New Category..." -->
+        <div class="form-group">
+          <label for="postCategorySelect">Category *</label>
+          <select id="postCategorySelect" class="form-control"></select>
+
+          <!-- Appears dynamically when "+ Add New Category..." is selected -->
+          <div id="newCategoryBox" class="new-category-box">
+            <input
+              id="newCategoryInput"
+              class="form-control"
+              type="text"
+              placeholder="Type new category (e.g. Food, Travel, Friends)"
+            />
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button id="cancelModalBtn" class="btn-secondary" type="button">Cancel</button>
+          <button id="savePostBtn" class="btn-primary" type="submit">Publish Post</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ========================================================================
+       SECTION 6: TOAST NOTIFICATION BANNER
+       ======================================================================== -->
+  <div id="toast" class="toast" role="status" aria-live="polite">Action completed!</div>
+  <script src="./app.js"></script>
+</body>
+</html>
