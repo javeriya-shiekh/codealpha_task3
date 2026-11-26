@@ -1060,3 +1060,43 @@
       opacity: 1;
       transform: translateX(-50%) translateY(0);
     }
+
+    /* Filter Pill Wrapper for Delete Button */
+.filter-pill-wrap {
+  display: inline-flex;
+  align-items: center;
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.filter-pill-wrap .filter-btn {
+  border: none;
+  border-radius: 0;
+}
+
+.filter-pill-wrap .filter-btn.active {
+  border-radius: 0;
+}
+
+.filter-delete-btn {
+  background: transparent;
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+  font-weight: 700;
+  padding: 0.55rem 0.7rem;
+  border-left: 1px solid var(--border-color);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.filter-delete-btn:hover {
+  background: var(--danger-color);
+  color: #ffffff;
+}
+
+.filter-pill-wrap:has(.filter-btn.active) {
+  border-color: var(--pill-active-bg);
+}

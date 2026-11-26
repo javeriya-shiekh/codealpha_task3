@@ -278,32 +278,88 @@
     /* ------------------------------------------------------------------------
        F. DYNAMIC FILTER BUTTONS & CATEGORY DROPDOWN POPULATION
        ------------------------------------------------------------------------ */
-    function renderFilterButtons() {
-      filterBar.innerHTML = "";
+function renderFilterButtons() {
+  filterBar.innerHTML = "";
 
-      // Build complete list: "All", dynamic categories, and "❤️ Favourites"
-      const filterItems = [
-        { label: "All", value: "All" },
-        ...categories.map((cat) => ({ label: cat, value: cat })),
-        { label: "❤️ Favourites", value: "Favourites" }
-      ];
+  // Default categories - inko delete nahi kar sakte
+  const DEFAULT_CATEGORIES = ["Nature", "City", "Animals"];
 
-      filterItems.forEach((item) => {
-        const btn = document.createElement("button");
-        btn.type = "button";
-        btn.className = "filter-btn" + (activeFilter === item.value ? " active" : "");
-        btn.textContent = item.label;
+  // Build complete list: "All", dynamic categories, and "❤️ Favourites"
+  const filterItems = [
+    { label: "All", value: "All" },
+    ...categories.map((cat) => ({ label: cat, value: cat })),
+    { label: "❤️ Favourites", value: "Favourites" }
+  ];
 
-        btn.addEventListener("click", () => {
-          activeFilter = item.value;
-          renderFilterButtons();
-          renderGallery();
-        });
+  filterItems.forEach((item) => {
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "filter-btn" + (activeFilter === item.value ? " active" : "");
+    btn.textContent = item.label;
 
-        filterBar.appendChild(btn);
+    btn.addEventListener("click", () => {
+      activeFilter = item.value;
+      renderFilterButtons();
+      renderGallery();
+    });
+
+    // Sirf CUSTOM category ke liye Delete button dikhao
+    // All, Favourites aur Default categories par Delete nahi aayega
+    const isCustomCategory = !DEFAULT_CATEGORIES.includes(item.value) 
+      && item.value !== "All" 
+      && item.value !== "Favourites";
+
+    if (isCustomCategory) {
+      const wrap = document.createElement("div");
+      wrap.className = "filter-pill-wrap";
+
+      const deleteBtn = document.createElement("button");
+      deleteBtn.type = "button";
+      deleteBtn.className = "filter-delete-btn";
+      deleteBtn.textContent = "✕";
+      deleteBtn.title = `Delete "${item.label}" category`;
+      deleteBtn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        deleteCategory(item.value);
       });
-    }
 
+      wrap.appendChild(btn);
+      wrap.appendChild(deleteBtn);
+      filterBar.appendChild(wrap);
+    } else {
+      filterBar.appendChild(btn);
+    }
+  });
+}
+
+// NEW FUNCTION: Delete Category + Uske Saare Posts
+function deleteCategory(categoryName) {
+  const postsInCategory = posts.filter(p => p.category === categoryName);
+
+  const confirmed = confirm(
+    `Are you sure you want to delete "${categoryName}" category?\n\n` +
+    `This will also delete ${postsInCategory.length} post(s) in this category.`
+  );
+
+  if (!confirmed) return;
+
+  // 1. Us category ke saare posts delete karo
+  posts = posts.filter(p => p.category !== categoryName);
+
+  // 2. Category list se category delete karo
+  categories = categories.filter(c => c !== categoryName);
+
+  // 3. Agar active filter wahi tha to All par le aao
+  if (activeFilter === categoryName) {
+    activeFilter = "All";
+  }
+
+  // 4. Save + Re-render
+  saveStateToStorage();
+  renderFilterButtons();
+  renderGallery();
+  showToast(`"${categoryName}" category deleted`);
+}
     function populateCategoryDropdown(selectedCategory = "Nature") {
       postCategorySelect.innerHTML = "";
 
